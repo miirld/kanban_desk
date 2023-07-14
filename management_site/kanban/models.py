@@ -42,19 +42,30 @@ class Column(models.Model):
         verbose_name_plural = 'Столбцы'
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name}-{self.board}"
+
+
+class Card(models.Model):
+    name = models.CharField(max_length=50, verbose_name='Наименование')
+    description = models.CharField(max_length=300, blank=True, verbose_name='Описание')
+    column = models.ForeignKey(Column, on_delete=models.CASCADE,
+                               related_name='Cards',
+                               verbose_name='Столбец')
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    is_active = models.BooleanField(default=True, verbose_name='Активно?')
+    position = models.PositiveIntegerField(default=0, verbose_name='Позиция')
+    # due_date = models.DateTimeField(verbose_name='Актуально до')
+
+    def __str__(self):
+        return f"{self.id} - {self.name}"
+
+    class Meta:
+        ordering = ["position"]
+        verbose_name = 'Задача'
+        verbose_name_plural = 'Задачи'
+
 
 '''
-class Card(models.Model):
-    list = models.ForeignKey(List, on_delete=models.CASCADE(),
-                             null=True,
-                             verbose_name='Столбец')
-    description = models.CharField(max_length=300, null=True, verbose_name='Описание')
-    created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
-    due_date = models.DateTimeField(verbose_name='Актуально до')
-    is_active = models.BooleanField(default=True, verbose_name='Активно?')
-
-
 class CardActivity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL(),
                              null=True,

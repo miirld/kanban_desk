@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Board, Column
+from .models import (Board, Column, Card)
 
 
 class BoardAdmin(admin.ModelAdmin):
@@ -19,8 +19,16 @@ class BoardAdmin(admin.ModelAdmin):
 class ColumnAdmin(admin.ModelAdmin):
     list_display = ('id', 'board', 'name', 'position')
     list_display_links = ('id', 'name', 'board')
-    list_filter = ('board', )
+    list_filter = ('board',)
+
+
+class CardAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'column', 'created_date', 'is_active', 'position')
+    list_display_links = ('id', 'name')
+    search_fields = ('name',)
+    list_filter = ('column',)
 
 
 admin.site.register(Board, BoardAdmin)
 admin.site.register(Column, ColumnAdmin)
+admin.site.register(Card, CardAdmin)

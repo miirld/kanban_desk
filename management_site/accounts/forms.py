@@ -1,10 +1,45 @@
 from django import forms
 # from .models import MyUser
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.forms import ReadOnlyPasswordHashField, authenticate
 from django.contrib.auth import get_user_model
 
 # from .models import MyUser
 User = get_user_model()
+
+
+class UserLoginForm(forms.Form):
+    """
+    Форма для авторизации пользователей. Включает в себя поля для
+    ввода логина и пароля.
+    """
+    username = forms.CharField(
+        label="Email",
+        widget=forms.TextInput(
+            attrs={"class": "form-control",
+                   "placeholder": "Введите email"
+                   }
+        )
+    )
+    password = forms.CharField(
+        label="Пароль",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Введите пароль"
+            }
+        )
+    )
+
+    def clean_username(self):
+        return self.data.get('username').lower()
+
+    def clean(self, *args, **kwargs):
+        username = self.cleaned_data.get('username').lower()
+        password = self.cleaned_data.get('password')
+        current_user = authenticate(username=username, password=password)
+        if not current_user:
+            raise forms.ValidationError("Неверные имя пользователя или пароль")
+        return super(UserLoginForm, self).clean(*args, **kwargs)
 
 
 class UserCreationForm(forms.ModelForm):
@@ -42,7 +77,7 @@ class UserCreationForm(forms.ModelForm):
         required=False
     )
     email = forms.CharField(
-        label="email",
+        label="Email",
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
