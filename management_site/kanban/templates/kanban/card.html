@@ -3,12 +3,23 @@
 {% block title %} {{ card.name }}::{{ block.super }} {% endblock %}
 
 {% block sidebar %}
-    {{ block.super }}
+    <div class="mb-3">
+        <form action="{% url 'update-card' pk=card.pk column_id=card.column.id board_id=card.column.board.id %}">
+            <button class="btn btn-primary">Изменить задачу</button>
+        </form>
+    </div>
+    {% if user.pk is card.column.board.owner.pk%}
+    <div class="mb-3">
+        <form action="{% url 'delete-card' pk=card.pk column_id=card.column.id board_id=card.column.board.id %}">
+            <button class="btn btn-primary">Удалить задачу</button>
+        </form>
+    </div>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
     {% if user in card.column.board.members.all %}
-        {{ card.name }}
+        <h2>{{ card }} - {{ card.column }} </h2>
         <br>
         {{ card.description }}
     {% else %}

@@ -7,8 +7,8 @@
 {% endblock %}
 
 {% block content %}
-    {% if user in board.members.all %}
-        <h1>Создание столбца</h1>
+    {% if user.pk is board.owner.pk %}
+        <h2>Создание столбца - {{ board }}</h2>
         <form action="{% url 'create-column' board.id %}" method="post">
             <div class="d-grid gap-2">
                 {% csrf_token %}

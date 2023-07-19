@@ -2,6 +2,7 @@ from django.db import models
 
 from management_site import settings
 from django.urls import reverse
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Board(models.Model):
@@ -35,7 +36,8 @@ class Column(models.Model):
     name = models.CharField(max_length=50, verbose_name='Наименование')
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='columns',
                               verbose_name='Доска')
-    position = models.PositiveIntegerField(default=0, verbose_name='Позиция')
+    position = models.PositiveIntegerField(verbose_name='Позиция',
+                                           validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     class Meta:
         ordering = ["board", "position"]
@@ -44,12 +46,15 @@ class Column(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['board', 'position'],
-                name='unique position'
+                name='unique column position'
             )
         ]
 
+    def get_absolute_url(self):
+        return reverse('view-column', kwargs={'pk': self.pk})
+
     def __str__(self):
-        return f"{self.name}-{self.board}"
+        return f"{self.name} - {self.board}"
 
 
 class Card(models.Model):
@@ -60,7 +65,8 @@ class Card(models.Model):
                                verbose_name='Столбец')
     created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     is_active = models.BooleanField(default=True, verbose_name='Активно?')
-    position = models.PositiveIntegerField(default=0, verbose_name='Позиция')
+    position = models.PositiveIntegerField(verbose_name='Позиция',
+                                           validators=[MinValueValidator(1), MaxValueValidator(9)])
 
     # due_date = models.DateTimeField(verbose_name='Актуально до')
 
@@ -77,7 +83,7 @@ class Card(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['column', 'position'],
-                name='unique position'
+                name='unique card position'
             )
         ]
 

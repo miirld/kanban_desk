@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} Изменение доски :: {{ block.super }} {% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+{% block content %}
+    {% if user.pk is board.owner.pk %}
+    <h1>Изменение доски - {{ board }}</h1>
+    <form action="" method="post">
+        <div class="d-grid gap-2">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="btn btn-primary mb-3">Изменить доску</button>
+        </div>
+    </form>
+    {% else %}
+        У вас нет доступа к этой странице
+    {% endif %}
+{% endblock %}

@@ -3,27 +3,37 @@
 {% block title %} {{ board }}::{{ block.super }} {% endblock %}
 
 {% block sidebar %}
-    <div class="mb-3">
-        <form action="{% url 'create-column' board.id %}">
-            <button class="btn btn-primary">Добавить столбец</button>
-        </form>
-    </div>
-    <div class="mb-3">
-        <form action="{% url 'create-card' board.id %}">
-            <button class="btn btn-primary">Добавить задачу</button>
-        </form>
-    </div>
+    {% if user.pk is board.owner.pk %}
+        <div class="mb-3">
+            <form action="{% url 'create-column' board.id %}">
+                <button class="btn btn-primary">Добавить столбец</button>
+            </form>
+        </div>
+        <div class="mb-3">
+            <form action="{% url 'update-board' board.id %}">
+                <button class="btn btn-primary">Изменить доску</button>
+            </form>
+        </div>
+        <div class="mb-3">
+            <form action="{% url 'delete-board' board.id %}">
+                <button class="btn btn-primary">Удалить доску</button>
+            </form>
+        </div>
+    {% endif %}
 {% endblock %}
 {% block content %}
     {% if columns %}
         {% with columns|first as first %}
             {% if user in first.board.members.all %}
+                <h2>{{ board }}</h2>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                         <tr>
                             {% for item in columns %}
-                                <th scope="col">{{ item.name }}</th>
+                                <th scope="col"><a
+                                        href='{% url "view-column" pk=item.pk board_id=item.board.id %}'>{{ item.name }}</a>
+                                </th>
                             {% endfor %}
                         </tr>
                         </thead>
@@ -34,9 +44,9 @@
                                     <table class="table table-hover">
                                         <tbody>
                                         {% for card in item.cards.all %}
-                                            <tr onclick="window.location.href='{{ card.get_absolute_url }}';return false">
+                                            <tr onclick="window.location.href='{% url "view-card" pk=card.pk column_id=card.column.id board_id=card.column.board.id %}';return false">
                                                 <td>
-                                                    {{ card.name }}
+                                                    {{ card.position }}. {{ card.name }}
                                                 </td>
                                             </tr>
                                         {% endfor %}

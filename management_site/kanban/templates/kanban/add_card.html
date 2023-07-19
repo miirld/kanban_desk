@@ -7,9 +7,9 @@
 {% endblock %}
 
 {% block content %}
-    {% if user in board.members.all %}
-        <h1>Создание задачи</h1>
-        <form action="{% url 'create-card' board.id %}" method="post">
+    {% if user in column.board.members.all %}
+        <h2>Создание задачи - {{ column }}</h2>
+        <form action="{% url 'create-card' pk=column.pk board_id=column.board.id %}" method="post">
             <div class="d-grid gap-2">
                 {% csrf_token %}
                 {{ form.as_p }}
