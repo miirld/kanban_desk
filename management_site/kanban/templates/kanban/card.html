@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %} {{ card.name }}::{{ block.super }} {% endblock %}
+
+{% block sidebar %}
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {% if user in card.column.board.members.all %}
+        {{ card.name }}
+        <br>
+        {{ card.description }}
+    {% else %}
+        У вас нет доступа к этой карточке
+    {% endif %}
+{% endblock %}
+
+

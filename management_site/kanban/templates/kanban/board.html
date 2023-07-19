@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %} {{ board }}::{{ block.super }} {% endblock %}
+
+{% block sidebar %}
+    <div class="mb-3">
+        <form action="{% url 'create-column' board.id %}">
+            <button class="btn btn-primary">Добавить столбец</button>
+        </form>
+    </div>
+    <div class="mb-3">
+        <form action="{% url 'create-card' board.id %}">
+            <button class="btn btn-primary">Добавить задачу</button>
+        </form>
+    </div>
+{% endblock %}
+{% block content %}
+    {% if columns %}
+        {% with columns|first as first %}
+            {% if user in first.board.members.all %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            {% for item in columns %}
+                                <th scope="col">{{ item.name }}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            {% for item in columns %}
+                                <td>
+                                    <table class="table table-hover">
+                                        <tbody>
+                                        {% for card in item.cards.all %}
+                                            <tr onclick="window.location.href='{{ card.get_absolute_url }}';return false">
+                                                <td>
+                                                    {{ card.name }}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                У вас нет доступа к этой доске
+            {% endif %}
+        {% endwith %}
+    {% else %}
+        Пока не добавлено ни одного столбца
+    {% endif %}
+{% endblock %}
+

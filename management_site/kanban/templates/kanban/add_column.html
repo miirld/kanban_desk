@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} Создание столбца :: {{ block.super }} {% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+{% block content %}
+    {% if user in board.members.all %}
+        <h1>Создание столбца</h1>
+        <form action="{% url 'create-column' board.id %}" method="post">
+            <div class="d-grid gap-2">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <button type="submit" class="btn btn-primary mb-3">Создать столбец</button>
+            </div>
+        </form>
+    {% else %}
+        У вас нет доступа к этой странице
+    {% endif %}
+{% endblock %}

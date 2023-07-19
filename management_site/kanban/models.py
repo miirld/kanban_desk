@@ -1,6 +1,7 @@
 from django.db import models
 
 from management_site import settings
+from django.urls import reverse
 
 
 class Board(models.Model):
@@ -40,6 +41,12 @@ class Column(models.Model):
         ordering = ["board", "position"]
         verbose_name = 'Столбец'
         verbose_name_plural = 'Столбцы'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['board', 'position'],
+                name='unique position'
+            )
+        ]
 
     def __str__(self):
         return f"{self.name}-{self.board}"
@@ -49,20 +56,30 @@ class Card(models.Model):
     name = models.CharField(max_length=50, verbose_name='Наименование')
     description = models.CharField(max_length=300, blank=True, verbose_name='Описание')
     column = models.ForeignKey(Column, on_delete=models.CASCADE,
-                               related_name='Cards',
+                               related_name='cards',
                                verbose_name='Столбец')
     created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     is_active = models.BooleanField(default=True, verbose_name='Активно?')
     position = models.PositiveIntegerField(default=0, verbose_name='Позиция')
+
     # due_date = models.DateTimeField(verbose_name='Актуально до')
 
     def __str__(self):
-        return f"{self.id} - {self.name}"
+        return f"{self.name}"
+
+    def get_absolute_url(self):
+        return reverse('view-card', kwargs={'pk': self.pk})
 
     class Meta:
         ordering = ["position"]
         verbose_name = 'Задача'
         verbose_name_plural = 'Задачи'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['column', 'position'],
+                name='unique position'
+            )
+        ]
 
 
 '''
