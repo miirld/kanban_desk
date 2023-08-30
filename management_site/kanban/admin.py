@@ -23,7 +23,8 @@ class ColumnAdmin(admin.ModelAdmin):
 
 
 class CardAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'column', 'created_date', 'is_active', 'position')
+    list_display = ('id', 'name', 'column', 'created_date',
+                    'is_active', 'position')
     list_display_links = ('id', 'name')
     search_fields = ('name',)
     list_filter = ('column',)
@@ -32,3 +33,6 @@ class CardAdmin(admin.ModelAdmin):
 admin.site.register(Board, BoardAdmin)
 admin.site.register(Column, ColumnAdmin)
 admin.site.register(Card, CardAdmin)
+
+
+# Test
